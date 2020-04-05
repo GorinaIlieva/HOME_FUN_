@@ -1,0 +1,110 @@
+[
+        {
+            "id": "1",
+            "name": "Movies",
+            "list": [
+                {
+                    "name": "Home Alone",
+                    "description": "Stacks and Queues description..."
+                },
+                {
+                    "name": "Generics",
+                    "description": "Generics description..."
+                },
+                {
+                    "name": "Multidimentional Arrays",
+                    "description": "Multidimentional Arrays description..."
+                }
+            ]
+        },
+        {
+            "id": "2",
+            "name": "Books",
+            "list": [
+                {
+                    "name": "Stacks anad Queues",
+                    "description": "Stacks anad Queues description..."
+                },
+                {
+                    "name": "Generics",
+                    "description": "Generics description..."
+                },
+                {
+                    "name": "Multidimentional Arrays",
+                    "description": "Multidimensional Arrays description..."
+                }
+            ]
+        },
+        {
+            "id": "3",
+            "name": "Games",
+            "list": [
+                {
+                    "name": "Object Composition",
+                    "description": "Object Composition description..."
+                },
+                {
+                    "name": "Prototype and Inheritance",
+                    "description": "Prototype and Inheritance description..."
+                },
+                {
+                    "name": "Asynchronous programming",
+                    "description": "Asynchronous programming description..."
+                }
+            ]
+        },
+        {
+            "id": "4",
+            "name": "Recipes",
+            "list": [
+                {
+                    "name": "Tuples and Sets",
+                    "description": "Tuples and Sets description..."
+                },
+                {
+                    "name": "Multidimensional Lists",
+                    "description": "Multidimensional Lists description..."
+                },
+                {
+                    "name": "Comprehension",
+                    "description": "Comprehension description..."
+                }
+            ]
+        },
+        {
+            "id": "5",
+            "name": "Plants Growing",
+            "list": [
+                {
+                    "name": "Tuples and Sets",
+                    "description": "Tuples and Sets description..."
+                },
+                {
+                    "name": "Multidimensional Lists",
+                    "description": "Multidimensional Lists description..."
+                },
+                {
+                    "name": "Comprehension",
+                    "description": "Comprehension description..."
+                }
+            ]
+        },
+        {
+            "id": "6",
+            "name": "Beauty Advices",
+            "list": [
+                {
+                    "name": "Tuples and Sets",
+                    "description": "Tuples and Sets description..."
+                },
+                {
+                    "name": "Multidimensional Lists",
+                    "description": "Multidimensional Lists description..."
+                },
+                {
+                    "name": "Comprehension",
+                    "description": "Comprehension description..."
+                }
+            ]
+        }
+    ]
