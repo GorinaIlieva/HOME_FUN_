@@ -1,10 +1,8 @@
 <template>
   <div id="app">
-    <app-nav 
-    :navItems="tutorials"
-    @viewContentActivityTypeReceiver="contentReceiver($event)"
-    >
-    </app-nav>
+    <app-nav :navItems="navItems" />
+   <!-- <app-activities :subjects='subjects' /> -->
+   
     <router-view></router-view>
     <!-- <app-login/> -->
     <!-- <app-register/> -->
@@ -13,17 +11,17 @@
     :currentItemList="currentItem.list"
     :navItems="tutorials"
     @selectCategoryReceiver="adoptingCategory($event)"
-    > </app-create> -->
+    > </app-create>-->
     <!-- <app-home 
     :currentItemList="currentItem.list"
-    ></app-home> -->
+    ></app-home>-->
   </div>
 </template>
 
 <script>
-import tutorials from "../src/tutorials.json";
-
 import AppNav from "./components/core/Navigation";
+import { get } from "../src/components/service/requester";
+// import AppActivities from '../src/components/views/Activities'
 // import AppHome from "./components/views/Home";
 // import AppRegister from "./components/views/Register"
 // import AppLogin from "./components/views/Login"
@@ -32,26 +30,37 @@ export default {
   name: "App",
   data: function() {
     return {
-      tutorials,
-      currentItem: Object,
+      navItems: Array,
+      
+      currentActivity: Array,
       adoptedCategory: Object
     };
   },
+  created() {
+    get("appdata", "activities", "GET", "Kinvey").then(data => {
+      this.navItems = data;
+    });
+  },
   components: {
     AppNav,
+    // AppActivities
     // AppHome,
     // AppLogin,
     // AppCreate,
     // AppRegister
   },
-  methods:{
-    contentReceiver(e){
-      this.currentItem= tutorials.find(t=>t.id===e)
-    },
-    adoptingCategory(e){
-      this.adoptedCategory=tutorials.find(t=>t.id===e)
-      
-    }
+  methods: {
+    
+    //   adoptingCategory(e){
+    //     this.adoptedCategory=tutorials.find(t=>t.id===e)
+
+    //   }
+  },
+  computed: {
+    // subjects() {
+    //     return this.navItems.find(a => a._id === this.currentActivityId).list;
+     
+    // }
   }
 };
 </script>

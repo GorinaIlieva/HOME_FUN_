@@ -1,8 +1,6 @@
 <template>
   <div>
-    <h2 v-if="success">Registration was successful!</h2>
-    <form v-else @submit.prevent="submitHandler">
-      
+    <form @submit.prevent="submitHandler" ref='registerForm'>
       <p class="h4 text-center mb-4">Sign up</p>
       <div class="grey-text">
         <mdb-input
@@ -50,13 +48,16 @@
         <template v-if="$v.password.$error">
           <p class="error" v-if="!$v.password.required">Password is required!</p>
           <p class="error" v-else-if="!$v.password.alphanumeric">Password is invalid!</p>
-           <p class="error" v-else-if="!$v.password.minLength">Password has to be more than 8 symbols!</p>
+          <p
+            class="error"
+            v-else-if="!$v.password.minLength"
+          >Password has to be more than 8 symbols!</p>
         </template>
 
         <mdb-input
           label="Confirm your password"
-          icon="exclamation-triangle"
-          type="text"
+          icon="lock"
+          type="password"
           v-model="confirmPassword"
           @blur="$v.confirmPassword.$touch"
         />
@@ -65,7 +66,7 @@
         </template>
       </div>
       <div class="text-center">
-        <mdb-btn :disabled="$v.$invalid" type='submit' color="primary">Register</mdb-btn>
+        <mdb-btn :disabled="$v.$invalid" type="submit" color="primary">Register</mdb-btn>
       </div>
     </form>
   </div>
@@ -81,8 +82,9 @@ import {
   sameAs,
   helpers
 } from "vuelidate/lib/validators";
-import {setUserData} from '../auth/authentication';
-import {post} from '../service/requester'
+import { setUserData } from "../auth/authentication";
+import { post } from "../service/requester";
+import { toastSuccess } from "../../utils/toasted";
 
 function name(value) {
   const valueArray = value.trim().split(" ");
@@ -107,7 +109,7 @@ export default {
   name: "AppRegister",
   data() {
     return {
-      success: false,
+      
       name: "",
       email: "",
       confirmEmail: "",
@@ -137,27 +139,40 @@ export default {
     }
   },
   components: {
-    
     mdbInput,
     mdbBtn
   },
   methods: {
     setUserData,
     submitHandler() {
-    this.$v.$touch();
-     post('user', '', 'POST', {username: this.name, password: this.password}, 'Basic')
-     .then(data=>{
-       setUserData(data)
-       this.$router.push({name:'AppLogin'})
-       console.log(localStorage.getItem('username'))
-     })
-     .catch(($error)=>{console.log($error)})
-      
+      this.$v.$touch();
+      post(
+        "user",
+        "",
+        "POST",
+        { username: this.name, password: this.password },
+        "Basic"
+      )
+        .then(data => {
+          setUserData(data);
+          this.$router.push({ name: "AppHome" });
+          toastSuccess("You have successfully registered!");
+          console.log(localStorage.getItem("username"));
+        })
+        .catch($error => {
+          // this.name='',
+          // this.email='',
+          // this.confirmEmail='',
+          // this.password='',
+          // this.confirmPassword=''
+        //   console.log(this.$refs.registerForm.innerHTML)
+        //  this.$refs.registerForm.reset()
+          console.log($error);
+        });
+
       if (this.$v.$error) {
         return;
       }
-      console.log("You submitted the form successfully!");
-      this.success = true;
     }
   }
 };

@@ -1,35 +1,27 @@
-<template>
-  <mdb-navbar color="indigo" dark>
-     <mdb-btn color="primary"><mdb-icon icon="magic" class="mr-1" router-link to="/home"/>*FUN*HOME</mdb-btn>
-    <mdb-navbar-toggler>
-      <mdb-navbar-nav>
-        <!-- <mdb-nav-item href="#" active>Home</mdb-nav-item> -->
-        <!-- isNOTAuth -->
-        <mdb-nav-item router-link to="/login">LogIn</mdb-nav-item>
-        <mdb-nav-item router-link to="/register">Register</mdb-nav-item>
-        <!-- isAuth -->
-        <mdb-nav-item
-          v-for="item in navItems"
-          :key="item.id"
-          @click="viewContentActivityTypeHandler(item.id)"
-        >{{item.name}}</mdb-nav-item>
 
-       
-       <mdb-btn color="primary"><mdb-icon icon="magic" class="mr-1" router-link to="/create"/>ADD an ACTIVITY [+]</mdb-btn>
-        <!-- <mdb-dropdown tag="li" class="nav-item">
-          <mdb-dropdown-toggle
-            tag="a"
-            navLink
-            color="indigo"
-            slot="toggle"
-            waves-fixed
-          >Dropdown link</mdb-dropdown-toggle>
-          <mdb-dropdown-menu>
-            <mdb-dropdown-item>Action</mdb-dropdown-item>
-            <mdb-dropdown-item>Another action</mdb-dropdown-item>
-            <mdb-dropdown-item>Something else here</mdb-dropdown-item>
-          </mdb-dropdown-menu>
-        </mdb-dropdown>-->
+  <template>
+  <mdb-navbar expand="large" dark color="indigo">
+    <mdb-navbar-brand rauter-link to="/">Navbar</mdb-navbar-brand>
+    <mdb-navbar-toggler>
+      <mdb-navbar-nav right>
+        <template v-if="isLogged">
+          <mdb-dropdown tag="li" class="nav-item">
+            <mdb-dropdown-toggle tag="a" navLink color="indigo" slot="toggle" waves-fixed>Activities</mdb-dropdown-toggle>
+            <mdb-dropdown-menu>
+              <mdb-dropdown-item v-for="item in navItems" :key="item._id"
+                router-link :to="{ name: 'AppActivity', params: { id: item._id }}"
+                  @click="viewContentActivityTypeHandler(item._id)">{{item.name}}
+              </mdb-dropdown-item>
+            </mdb-dropdown-menu>
+          </mdb-dropdown>
+          <mdb-nav-item router-link to="/profile" active>Profile</mdb-nav-item>
+          <mdb-nav-item router-link to="/create" active>Create an Activity</mdb-nav-item>
+          <mdb-nav-item router-link to="/logout" active>Logout</mdb-nav-item>
+        </template>
+        <template v-else>
+          <mdb-nav-item router-link to="/login">Login</mdb-nav-item>
+          <mdb-nav-item router-link to="/Register">Register</mdb-nav-item>
+        </template>
       </mdb-navbar-nav>
     </mdb-navbar-toggler>
   </mdb-navbar>
@@ -38,59 +30,63 @@
 <script>
 import {
   mdbNavbar,
-  // mdbNavbarBrand,
+  mdbNavbarBrand,
   mdbNavbarToggler,
   mdbNavbarNav,
   mdbNavItem,
-  mdbBtn,
-  mdbIcon
-  //   mdbDropdown,
-  //   mdbDropdownToggle,
-  //   mdbDropdownItem,
-  //   mdbDropdownMenu
+  mdbDropdown,
+  mdbDropdownToggle,
+  mdbDropdownItem,
+  mdbDropdownMenu
 } from "mdbvue";
+
+import EventBus from "../../utils/eventbus";
+
+
 
 export default {
   name: "AppNav",
   data: function() {
     return {
-      
+      isLogged: Boolean
     };
   },
-  props: {
-    navItems: {
-      type: Array,
-      required: true
-    }
-  },
+
   components: {
     mdbNavbar,
-    // mdbNavbarBrand,
+    mdbNavbarBrand,
     mdbNavbarToggler,
     mdbNavbarNav,
     mdbNavItem,
-    mdbBtn,
-    mdbIcon
-    // mdbDropdown,
-    // mdbDropdownToggle,
-    // mdbDropdownItem,
-    // mdbDropdownMenu
+
+    mdbDropdown,
+    mdbDropdownToggle,
+    mdbDropdownItem,
+    mdbDropdownMenu
+  },
+  beforeCreate() {
+    this.$emit("isLogged", localStorage.getItem("authtoken") !== null);
+  },
+  props: {
+    navItems: {
+      required: true,
+      type: Array
+    }
   },
   methods: {
-    viewContentActivityTypeHandler(id) {
-      this.$emit('viewContentActivityTypeReceiver', id)
+    viewContentActivityTypeHandler(_id) {
+      console.log(_id);
+      EventBus.$emit("viewContentActivityTypeReceiver", _id);
     }
+    
   }
 };
 </script>
 <style scoped>
-
-
 .btn:hover {
-    /* color: #44a9f8;
+  /* color: #44a9f8;
     background: white; */
-    border: 1px solid #44a9f8;
-    /* text-decoration: underline; */
+  border: 1px solid #44a9f8;
+  /* text-decoration: underline; */
 }
-
 </style>

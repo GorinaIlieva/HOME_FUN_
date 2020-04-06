@@ -1,3 +1,5 @@
+import {toastError} from '../../utils/toasted'
+
 const appKey = 'kid_BJVrLcNDL';
 const appSecret = 'aeaee2abb6e14e7aa3dcac257264b76f';
 const rootUrl = 'https://baas.kinvey.com'
@@ -5,7 +7,7 @@ const rootUrl = 'https://baas.kinvey.com'
 function createAuthorization(type) {
     return type === 'Basic'
         ? `Basic ${btoa(`${appKey}:${appSecret}`)}`
-        : `Kinvey ${sessionStorage.getItem('authtoken')}`
+        : `Kinvey ${localStorage.getItem('authtoken')}`
 }
 
 function makingHeaders(httpRequest, data, type) {
@@ -31,13 +33,13 @@ function makingUrl(kM, eP) {
 function handleError(x) {
     if (!x.ok) {
         if (x.status === 409) {
-            throw new Error(`${x.status}: Username is already taken!` )
+            toastError(`${x.status}: Username is already taken!` )
         } else if (x.status === 500) {
-            throw new Error(`${x.status}: ${x.statusText}` + 'Server Error!')
+            toastError(`${x.status}: ${x.statusText}` + 'Server Error!')
         } else if (x.status === 401) {
-            throw new Error(`${x.status}: ${x.statusText}`)
+            toastError(`${x.status}: ${x.statusText}`)
         } else {
-            throw new Error(`${x.status}: ${x.statusText}`)
+            toastError(`${x.status}: ${x.statusText}`)
         }
     }
     return x
