@@ -73,7 +73,7 @@ export default {
         "Basic"
       ).then(data=>{
         setUserData(data)
-        console.log(localStorage.getItem('authtoken'))
+       
         toastSuccess('You have successfully login!')
         this.$router.push({name:'AppHome'})
       })

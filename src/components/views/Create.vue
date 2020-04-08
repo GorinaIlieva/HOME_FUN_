@@ -1,90 +1,79 @@
 <template>
-  <app-content>
-    <template v-slot:nav>
-      <ul>
-        <li
-          v-for="(curr,i) in adoptedCategoryList"
-          :key="i"
-          :class="{ active :selectedIndex===i }"
-          @click="selectIndex(i)"
-        >
-          <a>{{curr.name}}</a>
-        </li>
-      </ul>
+  <form @submit.prevent="addActivityType">
+    <mdb-input type="text" label="Category" outline v-model="category" @blur="$v.category.$touch" />
+
+    <template v-if="$v.category.$error">
+      <p class="error" v-if="!$v.category.required">Title is required!</p>
+      <p class="error" v-if="!$v.category.name">Title has to start with a capital letter!</p>
     </template>
-    <!-- <template v-slot:nav>
-      <ul>
-        <li
-          v-for="(curr,i) in currentItemList"
-          :key="i"
-          :class="{ active :selectedIndex===i }"
-          @click="selectIndex(i)"
-        >
-          <a>{{curr.name}}</a>
-        </li>
-      </ul>
+
+    <mdb-input type="text" label="Title" outline v-model="name" @blur="$v.name.$touch" />
+
+    <template v-if="$v.name.$error">
+      <p class="error" v-if="!$v.name.required">Title is required!</p>
+      <p class="error" v-if="!$v.name.name">Title has to start with a capital letter!</p>
+    </template>
+
+    <mdb-input type="text" label="ImageUrl" outline v-model="imgUrl" @blur="$v.imgUrl.$touch" />
+
+    <template v-if="$v.imgUrl.$error">
+      <p class="error" v-if="!$v.imgUrl.required">Title is required!</p>
+      <p
+        class="error"
+        v-if="!$v.imgUrl.imgUrl"
+      >Title has to start with https and end up with png or jpg!</p>
+    </template>
+
+    <!-- <section class="preview">
+      <select
+        class="browser-default custom-select"
+        @change="selectCategory($event)"
+        v-model="id"
+        @blur="$v.id.$touch"
+      >
+        <option class="browser-default" selected :value="null">Select a category...</option>
+        <option v-for="item in navItems" :key="item.id" :value="item._id">{{item.name}}{{item._id}}</option>
+      </select>
+    </section>
+    <template v-if="$v.id.$error">
+      <p class="error" v-if="!$v.id.required">You have to select a category!</p>
     </template>-->
 
-    <template v-slot:info>
-      <form @submit.prevent="addHandler"></form>
-      <mdb-input type="text" label="Title" outline v-model="name" @blur="$v.name.$touch" />
-
-      <template v-if="$v.name.$error">
-        <p class="error" v-if="!$v.name.required">Title is required!</p>
-        <p class="error" v-if="!$v.name.name">Title has to start with a capital letter!</p>
-      </template>
-
-      <section class="preview">
-        <select
-          class="browser-default custom-select"
-          @change="selectCategory($event)"
-          v-model="id"
-          @blur="$v.id.$touch"
-        >
-          <option class="browser-default" selected :value="null">Select a category...</option>
-          <option v-for="item in navItems" :key="item.id" :value="item.id">{{item.name}}</option>
-        </select>
-      </section>
-      <template v-if="$v.id.$error">
-        <p class="error" v-if="!$v.id.required">You have to select a category!</p>
-      </template>
-   
     <mdb-input
-        type="textarea"
-        label="Description - has to be at least 20 symbols"
-        outline
-        :rows="3"
-        v-model="description"
-        @blur="$v.description.$touch"
-      />
+      type="textarea"
+      label="Description - has to be at least 50 symbols"
+      outline
+      :rows="3"
+      v-model="description"
+      @blur="$v.description.$touch"
+    />
 
-      <template v-if="$v.description.$error">
-        <p class="error" v-if="!$v.description.required">Description is required!</p>
-        <p class="error" v-if="!$v.description.minLength">Description has to be at least 20 symbols!</p>
-      </template>
-
-      <mdb-btn :disabled="$v.$invalid" color="primary">
-        <mdb-icon icon="magic" class="mr-1" />ADD
-      </mdb-btn>
+    <template v-if="$v.description.$error">
+      <p class="error" v-if="!$v.description.required">Description is required!</p>
+      <p class="error" v-if="!$v.description.minLength">Description has to be at least 50 symbols!</p>
     </template>
-  </app-content>
+      <mdb-btn :disabled="!$v.$invalid" color="primary" type="submit">
+      <mdb-icon icon="magic" class="mr-1" />ADD
+    </mdb-btn>
+  </form>
 </template>
 
 <script>
 import { validationMixin } from "vuelidate";
 import { required, minLength, helpers } from "vuelidate/lib/validators";
 
-import AppContent from "../shared/Content";
 import { mdbInput, mdbBtn, mdbIcon } from "mdbvue";
+import { toastSuccess } from "../../utils/toasted";
+import { post, get } from "../service/requester";
 
 const name = helpers.regex("name", /^[A-Z].*$/);
+const imgUrl = helpers.regex("imgUrl", /^https?:\/\/.*\.(?:png|jpg)$/);
 
 export default {
   mixins: [validationMixin],
 
   name: "AppCreate",
   components: {
-    AppContent,
     mdbInput,
     mdbBtn,
     mdbIcon
@@ -94,14 +83,22 @@ export default {
       selectedIndex: 0,
       name: "",
       id: null,
-      description: ""
+      description: "",
+      category: "",
+      imgUrl: "",
+      navItems: Array
     };
   },
-  props: {
-    adoptedCategoryList: Array,
-    // currentItemList: Array,
-    navItems: Array
+  created() {
+    get("appdata", "activities", "GET", "Kinvey").then(data => {
+      this.navItems = data;
+      
+    });
   },
+
+  // adoptedCategoryList: Array,
+  // currentItemList: Array,
+
   methods: {
     selectIndex(i) {
       this.selectedIndex = i;
@@ -109,26 +106,59 @@ export default {
     selectCategory(e) {
       this.$emit("selectCategoryReceiver", e.target.value);
     },
-    // POSTTing in Kinvey
-    addHandler() {
+    addActivityType() {
       this.$v.$touch();
-      if (this.$v.$error) {
-        return;
-      }
-      console.log("You submitted the form successfully!");
+      // const { id, name, description } = this.$data;
 
-      const { id, name, description } = this.$data;
-      this.$emit("addHandlerReceiver", { id, name, description });
+      const { category, name, imgUrl, description } = this.$data;
+      
+    
+      post(
+        "appdata",
+        'activities',
+        "POST",
+        { category, name, imgUrl, description },
+        "Kinvey"
+      )
+        .then(() => {
+          toastSuccess("You have created an activity!");
+          // this.$router.push({ name: "AppActivity" });
+          this.$router.push('/activities')
+        })
+        .catch(error => console.log(error));
+
+      // post(
+      //   "appdata",
+      //   `activities/${id}`,
+      //   "POST",
+      //   { name, description },
+      //   "Kinvey"
+      // )
+      //   .then(() => {
+      //     toastSuccess("You have created an activity");
+      //     // this.$router.push({ name: "AppActivity" });
+      //   })
+      //   .catch(error => console.log(error));
+
+      // this.$emit("addHandlerReceiver", { id, name, description });
     }
   },
   validations: {
+    category: {
+      required,
+      name
+    },
     name: {
       required,
       name
     },
+    imgUrl: {
+      required,
+      imgUrl
+    },
     description: {
       required,
-      minLength: minLength(20)
+      minLength: minLength(50)
     },
     id: {
       required

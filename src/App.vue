@@ -1,11 +1,10 @@
 <template>
   <div id="app">
-    <app-nav :navItems="navItems" />
-   <!-- <app-activities :subjects='subjects' /> -->
-   
-    <router-view></router-view>
-    <!-- <app-login/> -->
-    <!-- <app-register/> -->
+    <app-nav :navItems="navItems" @onAuth="isAuth = $event" :isAuth="isAuth" />
+    <!-- <app-activities :subjects='subjects' /> -->
+    
+    <router-view @onAuth="isAuth = $event" :isAuth="isAuth"></router-view>
+    <app-footer />
     <!-- <app-create
     :adoptedCategoryList="adoptedCategory.list"
     :currentItemList="currentItem.list"
@@ -20,18 +19,18 @@
 
 <script>
 import AppNav from "./components/core/Navigation";
+import AppFooter from "./components/core/Footer";
+
 import { get } from "../src/components/service/requester";
 // import AppActivities from '../src/components/views/Activities'
-// import AppHome from "./components/views/Home";
-// import AppRegister from "./components/views/Register"
-// import AppLogin from "./components/views/Login"
+
 // import AppCreate from "./components/views/Create"
 export default {
   name: "App",
   data: function() {
     return {
+      isAuth: localStorage.getItem("authtoken") !== null,
       navItems: Array,
-      
       currentActivity: Array,
       adoptedCategory: Object
     };
@@ -43,6 +42,7 @@ export default {
   },
   components: {
     AppNav,
+    AppFooter
     // AppActivities
     // AppHome,
     // AppLogin,
@@ -50,16 +50,13 @@ export default {
     // AppRegister
   },
   methods: {
-    
     //   adoptingCategory(e){
     //     this.adoptedCategory=tutorials.find(t=>t.id===e)
-
     //   }
   },
   computed: {
     // subjects() {
     //     return this.navItems.find(a => a._id === this.currentActivityId).list;
-     
     // }
   }
 };
