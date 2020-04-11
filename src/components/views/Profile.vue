@@ -7,51 +7,50 @@
         <big>{{username}}</big>
       </p>
       <p class="infoType">You created {{mySubjects.length}} activitie/s =)</p>
-    <template v-if="mySubjects.length>0">
+      <template v-if="mySubjects.length>0">
+        <div>
+          <app-activity-each>
+            <template v-slot:sub>
+              <mdb-card v-for="sub in mySubjects" :key="sub._id">
+                <mdb-view hover>
+                  <router-link :to="{ name: 'AppDetails', params: { id: sub._id }}">
+                    <a>
+                      <mdb-card-image :src="sub.imgUrl" alt="Card image cap"></mdb-card-image>
 
-      <div>
-    <mdb-container>
-      <mdb-row>
-        <mdb-card-group deck>
-          <mdb-card v-for="sub in mySubjects" :key="sub._id">
-            <mdb-view hover><router-link :to="{ name: 'AppDetails', params: { id: sub._id }}">
-              <a>
-                <mdb-card-image
-                  :src='sub.imgUrl'
-                  alt="Card image cap"
-                > </mdb-card-image>
-                
-                <mdb-mask flex-center waves overlay="white-slight"></mdb-mask>
-              </a></router-link>
-            </mdb-view>
-            <mdb-card-body>
-              <mdb-card-title>/{{sub.category}}/</mdb-card-title>
-              <mdb-card-title> {{sub.name}}</mdb-card-title>
-              <mdb-card-text>{{sub.description.substring(0,15)}}</mdb-card-text>
-              <mdb-btn color="white"><router-link :to="{ name: 'AppDetails', params: { id: sub._id }}">Read more</router-link></mdb-btn>
-             
-            </mdb-card-body>
-          </mdb-card>
-        </mdb-card-group>
-      </mdb-row>
-    </mdb-container>
-  </div>  
-        
-    </template>
-    <template v-else>
-    <p><strong>No activities created yet!</strong></p>
-     </template>
+                      <mdb-mask flex-center waves overlay="white-slight"></mdb-mask>
+                    </a>
+                  </router-link>
+                </mdb-view>
+                <mdb-card-body>
+                  <mdb-card-title>/{{sub.category}}/</mdb-card-title>
+                  <mdb-card-title>{{sub.name}}</mdb-card-title>
+                  <mdb-card-text>{{sub.description.substring(0,15)}}</mdb-card-text>
+                  <mdb-btn color="white">
+                    <router-link :to="{ name: 'AppDetails', params: { id: sub._id }}">Read more</router-link>
+                  </mdb-btn>
+                </mdb-card-body>
+              </mdb-card>
+            </template>
+          </app-activity-each>
+        </div>
+      </template>
+      <template v-else>
+        <p>
+          <strong>No activities created yet!</strong>
+        </p>
+      </template>
     </div>
   </div>
 </template>
 
 <script>
 import { get } from "../service/requester";
+import AppActivityEach from "../shared/ActivityEach";
 
 import {
-  mdbContainer,
-  mdbRow,
-  mdbCardGroup,
+  // mdbContainer,
+  // mdbRow,
+  // mdbCardGroup,
   mdbCard,
   mdbCardBody,
   mdbCardTitle,
@@ -69,15 +68,15 @@ export default {
       username: localStorage.getItem("username"),
       creator: localStorage.getItem("creator"),
       userId: localStorage.getItem("userId"),
-      mySubjects: Array,
+      mySubjects: Array
     };
   },
-  components:{
-     
-      mdbContainer,
-    mdbRow,
-    mdbCardGroup,
-mdbCardImage,
+  components: {
+    AppActivityEach,
+    //   mdbContainer,
+    // mdbRow,
+    // mdbCardGroup,
+    mdbCardImage,
     mdbCard,
     mdbCardBody,
     mdbCardTitle,
@@ -93,7 +92,7 @@ mdbCardImage,
       "GET",
       "Kinvey"
     ).then(data => {
-        this.mySubjects=data
+      this.mySubjects = data;
     });
   }
 };

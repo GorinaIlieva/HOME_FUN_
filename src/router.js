@@ -10,7 +10,6 @@ import Edit from './components/views/Edit'
 import Profile from './components/views/Profile'
 
 
-
 Vue.use(Router)
 
 export default new Router({
@@ -39,7 +38,8 @@ export default new Router({
     {
       path:'/activities',
       name: 'AppActivities',
-      component : Activities
+      component : Activities,
+      
     },
     {
       path: '/activities/:id',

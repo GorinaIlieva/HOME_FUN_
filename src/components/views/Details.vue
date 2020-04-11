@@ -21,7 +21,7 @@
                 </mdb-btn>
               </template>
             </template>
-            <mdb-btn color="primary">Back</mdb-btn>
+            <mdb-btn @click="$router.go(-1)" color="primary">Back</mdb-btn>
           </mdb-card-body>
         </mdb-card>
       </mdb-card-group>

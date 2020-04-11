@@ -3,7 +3,7 @@
     <template v-if="subject">
       <mdb-input
         type="text"
-        label="Category"
+        :label="subject.category"
         v-model="category"
         outline
         @blur="$v.category.$touch"
@@ -13,14 +13,20 @@
         <p class="error" v-if="!$v.category.name">Title has to start with a capital letter!</p>
       </template>
 
-      <mdb-input type="text" label="Title" v-model="name" outline @blur="$v.name.$touch" />
+      <mdb-input type="text" :label="subject.name" v-model="name" outline @blur="$v.name.$touch" />
 
       <template v-if="$v.name.$error">
         <p class="error" v-if="!$v.name.required">Title is required!</p>
         <p class="error" v-if="!$v.name.name">Title has to start with a capital letter!</p>
       </template>
 
-      <mdb-input type="text" label="ImageUrl" v-model="imgUrl" outline @blur="$v.imgUrl.$touch" />
+      <mdb-input
+        type="text"
+        :label="subject.imgUrl"
+        v-model="imgUrl"
+        outline
+        @blur="$v.imgUrl.$touch"
+      />
 
       <template v-if="$v.imgUrl.$error">
         <p class="error" v-if="!$v.imgUrl.required">Title is required!</p>
@@ -32,7 +38,7 @@
 
       <mdb-input
         type="textarea"
-        label="Description - has to be at least 50 symbols"
+        :label="subject.description"
         outline
         :rows="3"
         v-model="description"
@@ -43,7 +49,6 @@
         <p class="error" v-if="!$v.description.required">Description is required!</p>
         <p class="error" v-if="!$v.description.minLength">Description has to be at least 50 symbols!</p>
       </template>
-
       <mdb-btn color="primary" type="submit">
         <mdb-icon icon="magic" class="mr-1" />EDIT
       </mdb-btn>
@@ -54,7 +59,7 @@
     <script>
 import { validationMixin } from "vuelidate";
 import { required, minLength, helpers } from "vuelidate/lib/validators";
-import { put } from "../service/requester";
+import { put, get } from "../service/requester";
 import { toastSuccess } from "../../utils/toasted";
 import { mdbInput, mdbBtn, mdbIcon } from "mdbvue";
 
@@ -72,7 +77,8 @@ export default {
       imgUrl: "",
       description: "",
       id: this.$route.params.id,
-      subject: Array
+      subject: Array,
+      
     };
   },
   components: {
@@ -80,7 +86,7 @@ export default {
     mdbBtn,
     mdbIcon
   },
-   validations: {
+  validations: {
     category: {
       required,
       name
@@ -96,30 +102,61 @@ export default {
     description: {
       required,
       minLength: minLength(50)
-    }},
+    }
+  },
 
- methods: {
-    changeCategory(e) {
-      this.category = e;
-    },
-
+  methods: {
     editActivityType() {
-      const { category, name, imgUrl, description } = this.$data;
-      console.log(this.$data);
+      
+      if (this.$v.category.$dirty) {
+        this.category = this.$data.category;
+      } else {
+        this.category = this.subject.category;
+      }
+
+      if (this.$v.name.$dirty) {
+        this.name = this.$data.name;
+      } else {
+        this.name = this.subject.name;
+      }
+      if (this.$v.imgUrl.$dirty) {
+        this.imgUrl = this.$data.imgUrl;
+      } else {
+        this.imgUrl = this.subject.imgUrl;
+      }
+      if (this.$v.description.$dirty) {
+        this.description = this.$data.description;
+      } else {
+        this.description = this.subject.description;
+      }
+
       put(
         "appdata",
         `activities/${this.id}`,
         "PUT",
-        { category, name, imgUrl, description },
+        {
+          category: this.category,
+          name: this.name,
+          imgUrl: this.imgUrl,
+          description: this.description
+        },
         "Kinvey"
-      ).then(() => {
-        toastSuccess("You have successfully edited this activity!");
-        this.$router.push("/activities");
-      })
-      .catch(error=>{console.log(error)});
+      )
+        .then(() => {
+          toastSuccess("You have successfully edited this activity!");
+          this.$router.push("/activities");
+        })
+        .catch(error => {
+          console.log(error);
+        });
     }
+  },
+  created() {
+    get("appdata", `activities/${this.id}`, "GET", "Kinvey").then(data => {
+      this.subject = data;
+      console.log(data);
+    });
   }
-   }
-
+};
 </script>
 

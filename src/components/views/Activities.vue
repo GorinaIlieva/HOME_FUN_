@@ -52,9 +52,7 @@ export default {
   data: function() {
     return {
       currentActivityId: 0,
-      
       subjects:Array
-      
       // currentId: 0
     };
   },
