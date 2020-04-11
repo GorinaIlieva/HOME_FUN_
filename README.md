@@ -13,12 +13,12 @@
 2.Activities - private part
   * accessable after a successful login
   * list of all posted activities
-  *all CRUD operations offert to the activities' creators*
+  * *all CRUD operations offert to the activities' creators*
   
 3.User Profile - private part
   * displays some personal info
   * list of posts of the particular user
-  *all CRUD operations*
+  * *all CRUD operations*
     
 4.Create Activity - private part
   * logged in users can generate a new activity
