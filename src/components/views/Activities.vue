@@ -1,5 +1,4 @@
 <template>
-
   <div>
    <app-activity-each>
      <template v-slot:sub>

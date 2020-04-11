@@ -3,17 +3,13 @@ import Router from 'vue-router'
 import Home from './components/views/Home'
 import Login from './components/views/Login'
 import Register from './components/views/Register'
-import Create from './components/views/Create'
-import Activities from './components/views/Activities'
-import Details from './components/views/Details'
-import Edit from './components/views/Edit'
-import Profile from './components/views/Profile'
+
 
 
 Vue.use(Router)
 
-export default new Router({
-  mode:'history',
+const router = new Router({
+  mode: 'history',
   routes: [
     {
       path: '/',
@@ -33,33 +29,51 @@ export default new Router({
     {
       path: '/create',
       name: 'AppCreate',
-      component: Create
+      component: ()=> import (/*webpackChunkName: "Create*/ "./components/views/Create"),
+      meta: {requiresAuth:true}
     },
     {
-      path:'/activities',
+      path: '/activities',
       name: 'AppActivities',
-      component : Activities,
-      
+      component: ()=> import (/*webpackChunkName: "Activities*/ "./components/views/Activities"),
+      meta: {requiresAuth:true}
     },
     {
       path: '/activities/:id',
-      name:'AppDetails',
-      component: Details,
-     
+      name: 'AppDetails',
+      component: ()=> import (/*webpackChunkName: "Details*/ "./components/views/Details"),
+      meta: {requiresAuth:true}
+
     },
     {
       path: '/edit/:id',
-      name:'AppEdit',
-      component: Edit,
-     
+      name: 'AppEdit',
+      component: ()=>import (/*webpackChunkName: "Edit"*/ "./components/views/Edit"),
+      meta: {requiresAuth: true}
+
     },
     {
       path: '/profile',
-      name:' AppProfile',
-      component: Profile
+      name: ' AppProfile',
+      component: ()=> import(/*webpackChunkName: "Profile" */ "./components/views/Profile"),
+      meta: { requiresAuth: true }
     }
-    
+
   ]
 });
+
+router.beforeEach((to, from, next) => {
+  if (to.meta.requiresAuth) {
+    if (!localStorage.getItem('authtoken')) {
+      next({ name: 'AppLogin' })
+    } else {
+      next()
+    }
+  } else {
+    next()
+  }
+})
+
+export default router;
 
 

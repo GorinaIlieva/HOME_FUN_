@@ -1,4 +1,3 @@
-
   <template>
      <mdb-navbar expand="large" dark color="indigo">
       <mdb-navbar-brand rauter-link to="/">HomeFUN</mdb-navbar-brand>
